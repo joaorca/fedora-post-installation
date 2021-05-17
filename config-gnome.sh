@@ -21,7 +21,7 @@ rm -rf ${EXTENSION_DIR}/sound-output-device-chooser
 gnome-extensions enable sound-output-device-chooser@kgshank.net
 
 #gsettings set org.gnome.desktop.interface gtk-theme 'Yaru-dark'
-gsettings set org.gnome.desktop.interface cursor-theme 'breeze_cursors'
+#gsettings set org.gnome.desktop.interface cursor-theme 'breeze_cursors'
 
 
 https://extensions.gnome.org/extension/906/sound-output-device-chooser/

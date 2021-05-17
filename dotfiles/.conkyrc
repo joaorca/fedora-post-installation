@@ -38,7 +38,7 @@ conky.text = [[
 ${font size=10:bold}SYSTEM${font} ${hr 2}
 ${color orange}Username:${color}$alignr${exec w | cut -d ' ' -f1 | grep -v USER | xargs -n1}
 ${color orange}Hostname:${color}$alignr$nodename
-${color orange}System:${color}$alignr${exec hostnamectl | grep "Operating System" | cut -d ' ' -f5-}
+${color orange}System:${color}$alignr${exec hostnamectl | grep "Operating System" | cut -d ' ' -f3-}
 ${color orange}DE:${color}$alignr${exec gnome-shell --version}
 ${color orange}Kernel:${color}$alignr$kernel
 ${color orange}Arch:${color}$alignr${execi 1000 arch}
