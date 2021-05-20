@@ -24,73 +24,57 @@ do
 done
 
 echo '{
+  "editor.tabSize": 2,
   "editor.fontSize": 11, //18,
   "editor.lineHeight": 16, //24,
   "editor.fontFamily": "Fira Code",
   "editor.fontLigatures": true,
-
-  // Aplica linhas verticais para lembrar de quebrar linha em códigos muito grandes
+  "editor.renderLineHighlight": "gutter",
   "editor.rulers": [80, 120],
-  "editor.formatOnSave": false,
+  "editor.parameterHints.enabled": false,
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": { "source.fixAll.eslint": true },
+
+  "window.zoomLevel": 1,
+  "breadcrumbs.enabled": true,
+  "terminal.integrated.fontSize": 12,
+  "extensions.ignoreRecommendations": true,
+  "explorer.confirmDragAndDrop": false,
+  "explorer.confirmDelete": false,
 
   "eslint.packageManager": "yarn",
-  "eslint.autoFixOnSave": true,
   "eslint.validate": [
-    {
-      "language": "javascript",
-      "autoFix": true
-    },
-    {
-      "language": "javascriptreact",
-      "autoFix": true
-    },
-    {
-      "language": "typescript",
-      "autoFix": true
-    },
-    {
-      "language": "typescriptreact",
-      "autoFix": true
-    }
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
   ],
 
   "files.associations": {
     ".sequelizerc": "javascript"
   },
 
-  // Aplica um sinal visual na esquerda da linha selecionada
-  "editor.renderLineHighlight": "gutter",
-
-  // Aumenta a fonte do terminal
-  "terminal.integrated.fontSize": 12,
-
-  // Define o tema dos ícones na sidebar
   "workbench.iconTheme": "material-icon-theme",
   "workbench.startupEditor": "newUntitledFile",
-  "editor.tabSize": 2,
-  "window.zoomLevel": 1,
-  "extensions.ignoreRecommendations": true,
+  "workbench.activityBar.visible": true,
+
   "emmet.syntaxProfiles": {
-    "javascript": "jsx",
+    "javascript": "jsx"
   },
   "emmet.includeLanguages": {
-    "javascript": "javascriptreact",
+    "javascript": "javascriptreact"
   },
-  "javascript.updateImportsOnFileMove.enabled": "never",
+
+  "git.enableSmartCommit": true,
   "gitlens.codeLens.recentChange.enabled": false,
   "gitlens.codeLens.authors.enabled": false,
   "gitlens.codeLens.enabled": false,
-  "breadcrumbs.enabled": true,
-  "git.enableSmartCommit": true,
-  "editor.parameterHints.enabled": false,
-  "typescript.updateImportsOnFileMove.enabled": "never",
-  "terminal.integrated.shell.osx": "/bin/zsh",
-  "explorer.confirmDragAndDrop": false,
-  "liveshare.featureSet": "insiders",
-  "explorer.confirmDelete": false,
 
-  "typescript.tsserver.log": "verbose",
+  "javascript.updateImportsOnFileMove.enabled": "never",
+  "typescript.updateImportsOnFileMove.enabled": "never",
   "javascript.suggest.autoImports": false,
   "typescript.suggest.autoImports": false,
-  "workbench.activityBar.visible": true
-}' > ~/.config/Code/User/settings.json
+  "typescript.tsserver.log": "verbose"
+}
+' > ~/.config/Code/User/settings.json
