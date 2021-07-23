@@ -34,11 +34,13 @@ else
     npm install --global yarn
     npm install --global @angular/cli
     npm install --global react-cli
+    npm install --global typescript
 
     rm -rf /usr/bin/yarn /usr/bin/ng /usr/bin/react
     ln -sf /opt/nodejs/node-v*-linux-x64/bin/yarn  /usr/bin/yarn
     ln -sf /opt/nodejs/node-v*-linux-x64/bin/ng    /usr/bin/ng
     ln -sf /opt/nodejs/node-v*-linux-x64/bin/react-cli /usr/bin/react
+    ln -sf /opt/nodejs/node-v*-linux-x64/bin/tsc    /usr/bin/tsc
 fi
 
 echo -e "\nDone...\n"
