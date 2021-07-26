@@ -3,16 +3,19 @@
 TITLE_COLOR='\033[1;31m'
 NC='\033[0m'
 
+_VSCODE_EXTENSIONS=(
+  "jpoissonnier.vscode-styled-components"
+)
+
 VSCODE_EXTENSIONS=(
-  "dracula-theme.theme-dracula"
-  "naumovs.color-highlight"
-  "mikestead.dotenv"
-  "editorconfig.editorconfig"
+  "esbenp.prettier-vscode"
   "dbaeumer.vscode-eslint"
   "eamodio.gitlens"
+  "naumovs.color-highlight"
+  "dracula-theme.theme-dracula"
   "pkief.material-icon-theme"
-  "jpoissonnier.vscode-styled-components"
-  "esbenp.prettier-vscode"
+  "editorconfig.editorconfig"
+  "mikestead.dotenv"
 )
 
 rm -rf ~/.vscode
@@ -25,9 +28,9 @@ done
 
 echo '{
   "editor.tabSize": 2,
-  "editor.fontSize": 11, //18,
-  "editor.lineHeight": 16, //24,
-  "editor.fontFamily": "Fira Code",
+  "editor.fontSize": 12,
+  "editor.lineHeight": 16,
+  "editor.fontFamily": "Source Code Pro",
   "editor.fontLigatures": true,
   "editor.renderLineHighlight": "gutter",
   "editor.rulers": [80, 120],
@@ -37,9 +40,13 @@ echo '{
   "editor.codeActionsOnSave": { "source.fixAll.eslint": true },
 
   "window.zoomLevel": 1,
+  
   "breadcrumbs.enabled": true,
+  
   "terminal.integrated.fontSize": 12,
+  
   "extensions.ignoreRecommendations": true,
+
   "explorer.confirmDragAndDrop": false,
   "explorer.confirmDelete": false,
 
@@ -55,6 +62,7 @@ echo '{
     ".sequelizerc": "javascript"
   },
 
+  "workbench.colorTheme": "Dracula Soft"'
   "workbench.iconTheme": "material-icon-theme",
   "workbench.startupEditor": "newUntitledFile",
   "workbench.activityBar.visible": true,
@@ -72,8 +80,9 @@ echo '{
   "gitlens.codeLens.enabled": false,
 
   "javascript.updateImportsOnFileMove.enabled": "never",
-  "typescript.updateImportsOnFileMove.enabled": "never",
   "javascript.suggest.autoImports": false,
+
+  "typescript.updateImportsOnFileMove.enabled": "never",
   "typescript.suggest.autoImports": false,
   "typescript.tsserver.log": "verbose"
 }

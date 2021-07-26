@@ -23,7 +23,6 @@ gnome-extensions enable sound-output-device-chooser@kgshank.net
 #gsettings set org.gnome.desktop.interface gtk-theme 'Yaru-dark'
 #gsettings set org.gnome.desktop.interface cursor-theme 'breeze_cursors'
 
-
+#https://extensions.gnome.org/extension/2890/tray-icons-reloaded/
 https://extensions.gnome.org/extension/906/sound-output-device-chooser/
-https://extensions.gnome.org/extension/2890/tray-icons-reloaded/
 https://extensions.gnome.org/extension/615/appindicator-support/

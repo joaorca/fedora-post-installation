@@ -33,5 +33,4 @@ journalctl --vacuum-time=1s
 
 pkcon refresh force -c -1
 
-
 echo -e "\n${YELLOW}Script Finished!${ENDCOLOR}"
