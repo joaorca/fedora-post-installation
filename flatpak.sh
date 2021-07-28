@@ -18,6 +18,7 @@ FLATPAK_PACKAGES=(
   com.getpostman.Postman
   org.videolan.VLC
   com.discordapp.Discord
+  org.flameshot.Flameshot
 )
 
 echo -e "\n${TITLE_COLOR}Add the Flathub repository${NC}"
