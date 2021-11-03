@@ -4,8 +4,10 @@ ERROR_COLOR='\033[7;31m'
 TITLE_COLOR='\033[1;31m'
 NC='\033[0m'
 
-RAMBOX_URL="https://github.com/ramboxapp/community-edition/releases/download/0.7.7/Rambox-0.7.7-linux-x86_64.rpm"
-RAMBOX_TMP_FILE="rambox.rpm"
+RAMBOX_VERSION="0.7.9"
+RAMBOX_DISTRO="linux-x86_64"
+RAMBOX_URL="https://github.com/ramboxapp/community-edition/releases/download/${RAMBOX_VERSION}/Rambox-${RAMBOX_VERSION}-${RAMBOX_DISTRO}.rpm"
+RAMBOX_TMP_FILE="rambox-${RAMBOX_VERSION}-${RAMBOX_DISTRO}.rpm"
 
 if [ $(id -u) != 0 ]; then
   echo -e "${ERROR_COLOR}O script deve ser executado como root${NC}"
