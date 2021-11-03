@@ -9,7 +9,7 @@ fi
 
 echo -e "\n${YELLOW}Cleaning dnf ...${ENDCOLOR}"
 dnf autoremove -y 
-dnf clean all
+#dnf clean all
 
 echo -e "\n${YELLOW}Cleaning old revisions of snaps ...${ENDCOLOR}"
 snap list --all | awk '/disabled/{print $1, $3}' |
@@ -31,6 +31,6 @@ rm -rf /root/.local/share/Trash/*/** &> /dev/null
 echo -e "\n${YELLOW}Cleaning Journal ...${ENDCOLOR}"
 journalctl --vacuum-time=1s
 
-pkcon refresh force -c -1
+#pkcon refresh force -c -1
 
 echo -e "\n${YELLOW}Script Finished!${ENDCOLOR}"

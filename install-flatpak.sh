@@ -11,11 +11,11 @@ _FLATPAK_PACKAGES=(
   io.github.wereturtle.ghostwriter
   us.zoom.Zoom
   rest.insomnia.Insomnia
+  com.getpostman.Postman
 )
 
 FLATPAK_PACKAGES=(
   com.axosoft.GitKraken
-  com.getpostman.Postman
   org.videolan.VLC
   com.discordapp.Discord
   org.flameshot.Flameshot

@@ -67,12 +67,21 @@ sudo dnf check-update
 sudo dnf install -y insync
 ```
 
-## google chrome
+## google chrome browser
 
 ```properties
 sudo dnf install -y fedora-workstation-repositories
 sudo dnf config-manager --set-enabled google-chrome --assumeyes
 sudo dnf install google-chrome-stable --assumeyes
+```
+
+## brave browser
+
+```properties
+sudo dnf install -y dnf-plugins-core
+sudo dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/x86_64/ --assumeyes
+sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
+sudo dnf install brave-browser --assumeyes
 ```
 
 ## youtube-dl
