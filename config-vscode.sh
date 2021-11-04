@@ -3,19 +3,20 @@
 TITLE_COLOR='\033[1;31m'
 NC='\033[0m'
 
-_VSCODE_EXTENSIONS=(
-  "jpoissonnier.vscode-styled-components"
-)
-
 VSCODE_EXTENSIONS=(
   "esbenp.prettier-vscode"
   "dbaeumer.vscode-eslint"
   "eamodio.gitlens"
   "naumovs.color-highlight"
-  "dracula-theme.theme-dracula"
   "pkief.material-icon-theme"
   "editorconfig.editorconfig"
   "mikestead.dotenv"
+  "barrsan.reui"
+  "christian-kohler.npm-intellisense"
+  "ms-azuretools.vscode-docker"
+  "ms-vscode.vscode-typescript-next"
+  "redhat.vscode-yaml"
+  "ritwickdey.liveserver"
 )
 
 rm -rf ~/.vscode
@@ -28,44 +29,42 @@ done
 
 echo '{
   "editor.tabSize": 2,
-  "editor.fontSize": 12,
-  "editor.lineHeight": 16,
-  "editor.fontFamily": "Source Code Pro",
+  "editor.fontSize": 16,
+  "editor.lineHeight": 20,
+  "editor.fontFamily": "Ubuntu Mono",
   "editor.fontLigatures": true,
   "editor.renderLineHighlight": "gutter",
-  "editor.rulers": [80, 120],
+  "editor.rulers": [100, 120],
   "editor.parameterHints.enabled": false,
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.codeActionsOnSave": { "source.fixAll.eslint": true },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
 
-  "window.zoomLevel": 1,
-  
   "breadcrumbs.enabled": true,
-  
-  "terminal.integrated.fontSize": 12,
-  
+  "terminal.integrated.fontSize": 14,
+  "terminal.integrated.fontFamily": "Source Code Pro",
   "extensions.ignoreRecommendations": true,
-
   "explorer.confirmDragAndDrop": false,
   "explorer.confirmDelete": false,
+  "workbench.startupEditor": "newUntitledFile",
+  "workbench.activityBar.visible": true,
+  "workbench.iconTheme": "material-icon-theme",
+  "workbench.colorTheme": "ReUI Default Bordered (react)",
 
   "eslint.packageManager": "yarn",
   "eslint.validate": [
     "javascript",
     "javascriptreact",
     "typescript",
-    "typescriptreact"
+    "typescriptreact",
+    "html"
   ],
 
   "files.associations": {
     ".sequelizerc": "javascript"
   },
-
-  "workbench.colorTheme": "Dracula Soft"'
-  "workbench.iconTheme": "material-icon-theme",
-  "workbench.startupEditor": "newUntitledFile",
-  "workbench.activityBar.visible": true,
 
   "emmet.syntaxProfiles": {
     "javascript": "jsx"
@@ -84,6 +83,8 @@ echo '{
 
   "typescript.updateImportsOnFileMove.enabled": "never",
   "typescript.suggest.autoImports": false,
-  "typescript.tsserver.log": "verbose"
+  "typescript.tsserver.log": "verbose",
+
+  "liveServer.settings.donotShowInfoMsg": true
 }
 ' > ~/.config/Code/User/settings.json
