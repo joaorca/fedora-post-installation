@@ -19,7 +19,7 @@ git clone --quiet $URL_SPACESHIP_REPOSITORY $OHMYZSH_THEME_PATH/spaceship-prompt
 ln -s $OHMYZSH_THEME_PATH/spaceship-prompt/spaceship.zsh-theme $OHMYZSH_THEME_PATH/spaceship.zsh-theme
 
 echo -e "\n${TITLE_COLOR}Instalando plugin ZPlugin${NC}"
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma-continuum/zinit/master/doc/install.sh)"
+sh -c "$(curl -fsSL https://git.io/zinit-install)"
 
 echo -e "\n${TITLE_COLOR}Alterando ZSH THEME${NC}"
 sed -i 's/^ZSH_THEME=.*/ZSH_THEME=\"spaceship\"/g' ~/.zshrc 
