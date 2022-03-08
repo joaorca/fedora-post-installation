@@ -84,5 +84,17 @@ for type in regular thin extralight light medium semibold bold italic thin-itali
   fi;
 done
 
+# ------------------------------------ MESLOLGS
+for type in Regular Bold Italic; do
+  file_path="${fonts_dir}/MesloLGS-${type}.ttf"
+  file_url="https://raw.githubusercontent.com/romkatv/powerlevel10k-media/master/MesloLGS%20NF%20${type}.ttf"
+  if [ ! -e "${file_path}" ]; then
+    wget -q "${file_url}" -O "${file_path}" --show-progress
+  else
+    echo "Found existing file $file_path"
+  fi;
+done
+
+
 echo "fc-cache -f"
 fc-cache -f

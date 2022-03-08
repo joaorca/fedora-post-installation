@@ -6,8 +6,6 @@ NC='\033[0m'
 
 _FLATPAK_PACKAGES=(
   com.spotify.Client
-  com.calibre_ebook.calibre
-  io.github.wereturtle.ghostwriter
   us.zoom.Zoom
   rest.insomnia.Insomnia
 )
@@ -20,6 +18,8 @@ FLATPAK_PACKAGES=(
   org.flameshot.Flameshot
   com.transmissionbt.Transmission
   com.getpostman.Postman
+  io.github.wereturtle.ghostwriter
+  com.calibre_ebook.calibre
 )
 
 echo -e "\n${TITLE_COLOR}Add the Flathub repository${NC}"
