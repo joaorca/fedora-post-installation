@@ -22,6 +22,6 @@ if [ "$user" != 'root' ]; then
 fi
 
 set -x
-$sh_c "dnf upgrade --refresh"
+$sh_c "dnf upgrade --refresh --assumeyes"
 $sh_c "dnf check"
-$sh_c "dnf autoremove"
+$sh_c "dnf autoremove --assumeyes"

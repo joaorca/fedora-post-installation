@@ -21,7 +21,7 @@ echo -e "\n${YELLOW}Cleaning snap cache ...${ENDCOLOR}"
 rm -f /var/lib/snapd/cache/*
 
 echo -e "\n${YELLOW}Removing old kernels...${ENDCOLOR}"
-dnf remove $(dnf repoquery --installonly --latest-limit=-2 -q)
+dnf remove $(dnf repoquery --installonly --latest-limit=-2 -q) --assumeyes
 
 echo -e "\n${YELLOW}Emptying every trashes...${ENDCOLOR}"
 rm -rf /home/*/.cache/thumbnails/*/** &> /dev/null
