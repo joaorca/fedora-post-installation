@@ -14,16 +14,17 @@ FLATPAK_PACKAGES=(
   com.axosoft.GitKraken
   org.videolan.VLC
   org.kde.haruna
-  com.discordapp.Discord
+  #com.discordapp.Discord
   org.flameshot.Flameshot
   com.transmissionbt.Transmission
   com.getpostman.Postman
-  io.github.wereturtle.ghostwriter
-  com.calibre_ebook.calibre
+  #io.github.wereturtle.ghostwriter
+  #com.calibre_ebook.calibre
 )
 
 echo -e "\n${TITLE_COLOR}Add the Flathub repository${NC}"
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+flatpak remote-modify --enable flathub
 
 for PACKAGE in ${FLATPAK_PACKAGES[@]}
 do

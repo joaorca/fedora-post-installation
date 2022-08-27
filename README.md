@@ -39,7 +39,7 @@ sudo dnf install -y yaru-icon-theme yaru-gtk3-theme breeze-cursor-theme numix-gt
 
 ## Ferramentas Rust
 ```properties
-sudo dnf install cargo
+sudo dnf install -y cargo
 cargo install bat exa ytop
 ```
 
