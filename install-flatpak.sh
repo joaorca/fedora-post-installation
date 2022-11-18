@@ -4,12 +4,6 @@ ERROR_COLOR='\033[7;31m'
 TITLE_COLOR='\033[1;31m'
 NC='\033[0m'
 
-_FLATPAK_PACKAGES=(
-  com.spotify.Client
-  us.zoom.Zoom
-  rest.insomnia.Insomnia
-)
-
 FLATPAK_PACKAGES=(
   com.axosoft.GitKraken
   org.videolan.VLC
@@ -18,6 +12,7 @@ FLATPAK_PACKAGES=(
   org.flameshot.Flameshot
   com.transmissionbt.Transmission
   com.getpostman.Postman
+  #rest.insomnia.Insomnia
   #io.github.wereturtle.ghostwriter
   #com.calibre_ebook.calibre
 )
