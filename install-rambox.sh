@@ -4,7 +4,7 @@ ERROR_COLOR='\033[7;31m'
 TITLE_COLOR='\033[1;31m'
 NC='\033[0m'
 
-RAMBOX_VERSION="2.0.8"
+RAMBOX_VERSION="2.1.3"
 RAMBOX_DISTRO="linux-x64"
 RAMBOX_URL="https://github.com/ramboxapp/download/releases/download/v${RAMBOX_VERSION}/Rambox-${RAMBOX_VERSION}-${RAMBOX_DISTRO}.rpm"
 RAMBOX_TMP_FILE="rambox-${RAMBOX_VERSION}-${RAMBOX_DISTRO}.rpm"
