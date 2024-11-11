@@ -4,8 +4,8 @@ ERROR_COLOR='\033[7;31m'
 TITLE_COLOR='\033[1;31m'
 NC='\033[0m'
 
-JETBRAINS_VERSION="1.28.1.15219"
-JETBRAINS_URL="https://download.jetbrains.com/toolbox/jetbrains-toolbox-${JETBRAINS_VERSION}.tar.gz"
+JETBRAINS_VERSION="2.5.1.34629"
+JETBRAINS_URL="https://download-cdn.jetbrains.com/toolbox/jetbrains-toolbox-${JETBRAINS_VERSION}.tar.gz"
 JETBRAINS_TMP_FILE="jetbrains-toolbox.tar.gz"
 JETBRAINS_FOLDER="/opt/jetbrains-toolbox"
 
@@ -22,7 +22,7 @@ fi
 echo -e "\n${TITLE_COLOR}Instalando JetBrains-Toolbox${NC}"
 
 if ! [ -f /tmp/${JETBRAINS_TMP_FILE} ]; then
-  wget -q ${JETBRAINS_URL} --show-progress -O /tmp/${JETBRAINS_TMP_FILE}
+  wget -q ${JETBRAINS_URL} --progress=bar:force -O /tmp/${JETBRAINS_TMP_FILE}
 fi
 
 tar -zxf /tmp/${JETBRAINS_TMP_FILE} -C /tmp

@@ -22,7 +22,7 @@ echo -e "\n${TITLE_COLOR}Instalando RAMBOX${NC}"
 
 if ! [ -f /tmp/${RAMBOX_TMP_FILE} ]; then
    echo -e ${RAMBOX_URL}
-   wget -q ${RAMBOX_URL} --show-progress -O /tmp/${RAMBOX_TMP_FILE} 
+   wget -q ${RAMBOX_URL} --progress=bar:force -O /tmp/${RAMBOX_TMP_FILE} 
 fi
 dnf install /tmp/${RAMBOX_TMP_FILE} --assumeyes
 

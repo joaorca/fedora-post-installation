@@ -14,7 +14,7 @@ for type in regular italic bold bold-italic light light-italic medium medium-ita
   file_path="${fonts_dir}/Ubuntu-${type}.ttf"
   file_url="https://www.1001fonts.com/download/font/ubuntu.${type}.ttf"
   if [ ! -e "${file_path}" ]; then
-    wget -q "${file_url}" -O "${file_path}" --show-progress
+    wget "${file_url}" -O "${file_path}" 
   else
     echo "Found existing file $file_path"
   fi;
@@ -25,7 +25,7 @@ for type in Light BoldItalic Light-1; do
   file_path="${fonts_dir}/OperatorMono-${type}.ttf"
   file_url="https://fontsfree.net/wp-content/fonts/basic/sans-serif/FontsFree-Net-OperatorMono-${type}.ttf"
   if [ ! -e "${file_path}" ]; then
-    wget -q "${file_url}" -O "${file_path}" --show-progress
+    wget "${file_url}" -O "${file_path}" 
   else
     echo "Found existing file $file_path"
   fi;
@@ -35,7 +35,7 @@ for type in Bold Medium; do
   file_path="${fonts_dir}/OperatorMono-${type}.ttf"
   file_url="https://fontsfree.net//wp-content/fonts/basic/various-basic/FontsFree-Net-OperatorMono-${type}.ttf"
   if [ ! -e "${file_path}" ]; then
-    wget -q "${file_url}" -O "${file_path}" --show-progress
+    wget "${file_url}" -O "${file_path}" 
   else
     echo "Found existing file $file_path"
   fi;
@@ -45,7 +45,7 @@ for type in Book BookItalic-1; do
   file_path="${fonts_dir}/OperatorMono-${type}.ttf"
   file_url="https://fontsfree.net//wp-content/fonts/basic/FontsFree-Net-OperatorMono-${type}.ttf"
   if [ ! -e "${file_path}" ]; then
-    wget -q "${file_url}" -O "${file_path}" --show-progress
+    wget "${file_url}" -O "${file_path}" 
   else
     echo "Found existing file $file_path"
   fi;
@@ -56,7 +56,7 @@ for type in regular extralight light semibold bold black; do
   file_path="${fonts_dir}/SourceCodePro-${type}.ttf"
   file_url="https://www.1001fonts.com/download/font/source-code-pro.${type}.ttf"
   if [ ! -e "${file_path}" ]; then
-    wget -q "${file_url}" -O "${file_path}" --show-progress
+    wget "${file_url}" -O "${file_path}" 
   else
     echo "Found existing file $file_path"
   fi;
@@ -67,7 +67,7 @@ for type in regular medium bold light retina; do
   file_path="${fonts_dir}/FiraCode-${type}.ttf"
   file_url="https://www.1001fonts.com/download/font/fira-mono.${type}.ttf"
   if [ ! -e "${file_path}" ]; then
-    wget -q "${file_url}" -O "${file_path}" --show-progress
+    wget "${file_url}" -O "${file_path}" 
   else
     echo "Found existing file $file_path"
   fi;
@@ -78,7 +78,7 @@ for type in regular thin extralight light medium semibold bold italic thin-itali
   file_path="${fonts_dir}/IBMPlexMono-${type}.ttf"
   file_url="https://www.1001fonts.com/download/font/ibm-plex-mono.${type}.ttf"
   if [ ! -e "${file_path}" ]; then
-    wget -q "${file_url}" -O "${file_path}" --show-progress
+    wget "${file_url}" -O "${file_path}" 
   else
     echo "Found existing file $file_path"
   fi;
@@ -89,7 +89,7 @@ for type in Regular Bold Italic; do
   file_path="${fonts_dir}/MesloLGS-${type}.ttf"
   file_url="https://raw.githubusercontent.com/romkatv/powerlevel10k-media/master/MesloLGS%20NF%20${type}.ttf"
   if [ ! -e "${file_path}" ]; then
-    wget -q "${file_url}" -O "${file_path}" --show-progress
+    wget "${file_url}" -O "${file_path}" 
   else
     echo "Found existing file $file_path"
   fi;

@@ -5,13 +5,14 @@ TITLE_COLOR='\033[1;31m'
 NC='\033[0m'
 
 FLATPAK_PACKAGES=(
-  com.axosoft.GitKraken
-  org.videolan.VLC
-  org.kde.haruna
-  #com.discordapp.Discord
-  org.flameshot.Flameshot
-  com.transmissionbt.Transmission
-  com.getpostman.Postman
+  com.discordapp.Discord
+  com.spotify.Client
+  #com.axosoft.GitKraken
+  #org.videolan.VLC
+  #org.kde.haruna
+  #org.flameshot.Flameshot
+  #com.transmissionbt.Transmission
+  #com.getpostman.Postman
   #rest.insomnia.Insomnia
   #io.github.wereturtle.ghostwriter
   #com.calibre_ebook.calibre

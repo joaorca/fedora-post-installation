@@ -26,3 +26,10 @@ gnome-extensions enable sound-output-device-chooser@kgshank.net
 #https://extensions.gnome.org/extension/2890/tray-icons-reloaded/
 https://extensions.gnome.org/extension/906/sound-output-device-chooser/
 https://extensions.gnome.org/extension/615/appindicator-support/
+
+
+
+https://extensions.gnome.org/extension/307/dash-to-dock/
+https://extensions.gnome.org/extension/4158/gnome-40-ui-improvments/
+https://extensions.gnome.org/extension/355/status-area-horizontal-spacing/
+https://extensions.gnome.org/extension/6807/system-monitor/

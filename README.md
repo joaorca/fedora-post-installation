@@ -33,7 +33,8 @@ sudo dnf install -y https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfr
 
 ## packages
 ```properties
-sudo dnf install -y neovim conky lm_sensors gnome-tweaks gnome-shell-extension-appindicator
+sudo dnf install -y neovim conky lm_sensors breeze-cursor-theme flameshot
+sudo dnf install -y gnome-tweaks gnome-shell-extension-appindicator gnome-extensions-app
 sudo dnf install -y yaru-icon-theme yaru-gtk3-theme breeze-cursor-theme numix-gtk-theme
 ```
 

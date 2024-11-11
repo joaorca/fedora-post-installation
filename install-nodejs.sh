@@ -22,7 +22,7 @@ fi
 echo -e "\n${TITLE_COLOR}Instalando NodeJS${NC}"
 
 if ! [ -f /tmp/node-${NODEJS_VERSION}-${NODEJS_DISTRO}.tar.xz ]; then
-    wget -q ${NODEJS_URL} --show-progress -P /tmp/
+    wget -q ${NODEJS_URL} --progress=bar:force -P /tmp/
 fi
 
 mkdir -p ${NODEJS_FOLDER}
