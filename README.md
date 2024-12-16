@@ -50,12 +50,10 @@ sudo dnf install -y zsh
 sudo usermod -s /usr/bin/zsh $(whoami)
 ```
 
-## vscode
+## Fish
 ```properties
-sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
-sudo sh -c 'echo -e "[VSCode]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
-sudo dnf check-update
-sudo dnf install -y code
+sudo dnf install -y fish
+sudo usermod -s /usr/bin/fish $(whoami)
 ```
 
 ## insync
@@ -64,27 +62,6 @@ sudo rpm --import https://d2t3ff60b2tol4.cloudfront.net/repomd.xml.key
 sudo sh -c 'echo -e "[InSync]\nname=Insync\nbaseurl=http://yum.insync.io/fedora/\$releasever/\ngpgcheck=1\ngpgkey=https://d2t3ff60b2tol4.cloudfront.net/repomd.xml.key\nenabled=1\nmetadata_expire=120m" > /etc/yum.repos.d/insync.repo'
 sudo dnf check-update
 sudo dnf install -y insync
-```
-
-## google chrome browser
-```properties
-sudo dnf install -y fedora-workstation-repositories
-sudo dnf config-manager --set-enabled google-chrome --assumeyes
-sudo dnf install google-chrome-stable --assumeyes
-```
-
-## brave browser
-```properties
-sudo dnf install -y dnf-plugins-core
-sudo dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/x86_64/ --assumeyes
-sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
-sudo dnf install brave-browser --assumeyes
-```
-
-## youtube-dl
-```properties
-sudo curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl
-sudo chmod a+rx /usr/local/bin/youtube-dl
 ```
 
 ## Docker
