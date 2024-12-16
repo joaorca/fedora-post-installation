@@ -13,3 +13,4 @@ curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fi
 echo -e "\n${TITLE_COLOR}Instalando Plugins${NC}"
 fisher install jhillyerd/plugin-git
 fisher install IlanCosman/tide@v5
+fisher install gazorby/fish-exa
