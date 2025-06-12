@@ -6,11 +6,11 @@ NC='\033[0m'
 
 FLATPAK_PACKAGES=(
   com.discordapp.Discord
-  com.spotify.Client
+  #com.spotify.Client
   com.visualstudio.code
-  com.axosoft.GitKraken
-  org.flameshot.Flameshot
-  rest.insomnia.Insomnia
+  #com.axosoft.GitKraken
+  #org.flameshot.Flameshot
+  #rest.insomnia.Insomnia
   #com.getpostman.Postman
   #org.videolan.VLC
   #org.kde.haruna
@@ -20,7 +20,8 @@ FLATPAK_PACKAGES=(
 )
 
 echo -e "\n${TITLE_COLOR}Add the Flathub repository${NC}"
-flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+#flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 flatpak remote-modify --enable flathub
 
 for PACKAGE in ${FLATPAK_PACKAGES[@]}
