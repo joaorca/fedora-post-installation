@@ -7,7 +7,7 @@ NC='\033[0m'
 FLATPAK_PACKAGES=(
   com.discordapp.Discord
   #com.spotify.Client
-  com.visualstudio.code
+  #com.visualstudio.code
   #com.axosoft.GitKraken
   #org.flameshot.Flameshot
   #rest.insomnia.Insomnia
