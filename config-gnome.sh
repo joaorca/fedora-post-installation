@@ -23,9 +23,12 @@ gnome-extensions enable sound-output-device-chooser@kgshank.net
 #gsettings set org.gnome.desktop.interface gtk-theme 'Yaru-dark'
 #gsettings set org.gnome.desktop.interface cursor-theme 'breeze_cursors'
 
-
+https://extensions.gnome.org/extension/615/appindicator-support/
+https://extensions.gnome.org/extension/1401/bluetooth-quick-connect/
 https://extensions.gnome.org/extension/307/dash-to-dock/
 https://extensions.gnome.org/extension/4158/gnome-40-ui-improvments/
+https://extensions.gnome.org/extension/3843/just-perfection/
 https://extensions.gnome.org/extension/355/status-area-horizontal-spacing/
+https://extensions.gnome.org/extension/19/user-themes/
+https://extensions.gnome.org/extension/1460/vitals/
 https://extensions.gnome.org/extension/6807/system-monitor/
-https://extensions.gnome.org/extension/615/appindicator-support/
