@@ -4,7 +4,7 @@ ERROR_COLOR='\033[7;31m'
 TITLE_COLOR='\033[1;31m'
 NC='\033[0m'
 
-JETBRAINS_VERSION="2.9.1.58121"
+JETBRAINS_VERSION="3.0.1.59888"
 JETBRAINS_URL="https://download-cdn.jetbrains.com/toolbox/jetbrains-toolbox-${JETBRAINS_VERSION}.tar.gz"
 JETBRAINS_TMP_FILE="jetbrains-toolbox.tar.gz"
 JETBRAINS_FOLDER="/opt/jetbrains-toolbox"
