@@ -16,10 +16,10 @@ echo -e "URL de download: ${JETBRAINS_URL}"
 JETBRAINS_TMP_FILE="jetbrains-toolbox.tar.gz"
 JETBRAINS_FOLDER="/opt/jetbrains-toolbox"
 
-if [ $(id -u) != 0 ]; then
-  echo -e "${ERROR_COLOR}O script deve ser executado como root${NC}"
-  exit 1
-fi
+#if [ $(id -u) != 0 ]; then
+#  echo -e "${ERROR_COLOR}O script deve ser executado como root${NC}"
+#  exit 1
+#fi
 
 if [ -f "${JETBRAINS_FOLDER}/jetbrains-toolbox" ]; then
   echo -e "JetBrains-Toolbox já instalado em ${JETBRAINS_FOLDER}"
@@ -30,13 +30,14 @@ echo -e "\n${TITLE_COLOR}Instalando JetBrains-Toolbox (Versão: ${JETBRAINS_VERS
 
 # Download
 if ! [ -f /tmp/${JETBRAINS_TMP_FILE} ]; then
-  wget -q --show-progress "${JETBRAINS_URL}" -O /tmp/${JETBRAINS_TMP_FILE}
+  sudo wget -q --show-progress "${JETBRAINS_URL}" -O /tmp/jetbrains/${JETBRAINS_TMP_FILE}
 fi
 
-tar -zxf /tmp/${JETBRAINS_TMP_FILE} -C /tmp
-mkdir -p ${JETBRAINS_FOLDER}
-mv /tmp/jetbrains-toolbox*/bin/* ${JETBRAINS_FOLDER}/
-chmod +x ${JETBRAINS_FOLDER}/jetbrains-toolbox
+sudo tar -zxf /tmp/jetbrains/${JETBRAINS_TMP_FILE} -C /tmp/jetbrains --strip-components=1
+/tmp/jetbrains/bin/jetbrains-toolbox --install
+#mkdir -p ${JETBRAINS_FOLDER}
+#mv /tmp/jetbrains-toolbox*/bin/* ${JETBRAINS_FOLDER}/
+#chmod +x ${JETBRAINS_FOLDER}/jetbrains-toolbox
 
 echo -e "\n${TITLE_COLOR}Instalação concluída!${NC}"
 echo -e "Execute: ${JETBRAINS_FOLDER}/jetbrains-toolbox para iniciar.\n"
