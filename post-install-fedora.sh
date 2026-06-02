@@ -122,8 +122,8 @@ npm_setup() {
     grep -q 'npm-global' ~/.bashrc 2>/dev/null || \
         echo 'export PATH="$HOME/.npm-global/bin:$PATH"' >> ~/.bashrc
     if command -v fish &>/dev/null; then
-        fish -c "contains $HOME/.npm-global/bin \$fish_user_paths
-            or set -U fish_user_paths $HOME/.npm-global/bin \$fish_user_paths" 2>/dev/null || true
+        fish -c "contains -- $HOME/.npm-global/bin \$fish_user_paths; or set -U fish_user_paths $HOME/.npm-global/bin \$fish_user_paths" 2>/dev/null || true
+        fish -c "contains -- $HOME/.local/bin \$fish_user_paths; or set -U fish_user_paths $HOME/.local/bin \$fish_user_paths" 2>/dev/null || true
     fi
 }
 
