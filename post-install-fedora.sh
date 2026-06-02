@@ -135,7 +135,7 @@ exec 4>"$PROGRESS_PIPE"
 progresso() {
     STEP=$(( STEP + 1 ))
     local pct=$(( STEP * 100 / TOTAL_STEPS ))
-    { echo "# $1"; echo "$pct"; } >&4 2>/dev/null || true
+    { echo "# [$pct%] $1"; echo "$pct"; } >&4 2>/dev/null || true
     echo -e "${BLUE}$1${NC}"
 }
 
