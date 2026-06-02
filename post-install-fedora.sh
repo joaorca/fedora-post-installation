@@ -11,17 +11,26 @@ PROGRESS_PIPE=$(mktemp -u)
 ZENITY_PROGRESS_PID=""
 SUDO_KEEPALIVE_PID=""
 MONITOR_PID=""
+SCRIPT_PGID=$(ps -o pgid= -p $$ | tr -d ' ')
 
 cleanup() {
+    [[ -n "${MONITOR_PID:-}" ]] && kill "$MONITOR_PID" 2>/dev/null || true
     [[ -n "${SUDO_KEEPALIVE_PID:-}" ]] && kill "$SUDO_KEEPALIVE_PID" 2>/dev/null || true
     { echo "100" >&4; exec 4>&-; } 2>/dev/null || true
     [[ -n "${ZENITY_PROGRESS_PID:-}" ]] && kill "$ZENITY_PROGRESS_PID" 2>/dev/null || true
     rm -f "$PROGRESS_PIPE" 2>/dev/null || true
 }
 trap cleanup EXIT
-trap 'trap - SIGTERM; kill -- -$$ 2>/dev/null; exit 1' SIGTERM
+trap 'trap - SIGTERM; kill -- -"$SCRIPT_PGID" 2>/dev/null; exit 1' SIGTERM
 
 echo -e "${BLUE}=== Fedora 44 Workstation — Script de Pós-Instalação ===${NC}"
+
+# Bloqueia execução direta como root
+if [[ "$EUID" -eq 0 ]]; then
+    echo -e "${BLUE}Erro: não execute este script como root ou com sudo.${NC}"
+    echo -e "${BLUE}Execute normalmente: bash post-install-fedora.sh${NC}"
+    exit 1
+fi
 
 # Verifica zenity
 if ! command -v zenity &>/dev/null; then
@@ -77,7 +86,7 @@ SELECTED=$(zenity --list --checklist \
     TRUE  fontes      "Fonte JetBrains Mono Nerd Font  [download]" \
     TRUE  gnome       "Configurações de interface do GNOME  [gsettings]" \
     TRUE  fish        "Fish Shell (padrão + plugins)  [DNF]" \
-    TRUE  clitools    "Ferramentas CLI (bat, eza, bottom)  [DNF]" \
+    TRUE  clitools    "Ferramentas CLI (bat, eza, btop)  [DNF]" \
     TRUE  claudecode  "Claude Code  [Node.js]" \
     TRUE  codex       "Codex (OpenAI)  [Node.js]" \
     TRUE  limpeza     "Limpeza do sistema (autoremove)  [DNF]" \
@@ -141,6 +150,7 @@ MONITOR_PID=$!
 progresso() {
     STEP=$(( STEP + 1 ))
     local pct=$(( STEP * 100 / TOTAL_STEPS ))
+    [[ $pct -ge 100 ]] && pct=99
     { echo "# [$pct%] $1"; echo "$pct"; } >&4 2>/dev/null || true
     echo -e "${BLUE}$1${NC}"
 }
@@ -207,7 +217,7 @@ fi
 if run_section chrome; then
     progresso "Instalando Google Chrome..."
     if ! rpm -q google-chrome-stable &>/dev/null; then
-        sudo dnf install https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm -y --disablerepo='*' && INSTALADOS+=("Google Chrome") || FALHOS+=("Google Chrome")
+        sudo dnf install https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm -y && INSTALADOS+=("Google Chrome") || FALHOS+=("Google Chrome")
     else
         PULADOS+=("Google Chrome")
     fi
@@ -246,15 +256,22 @@ if run_section toolbox; then
     progresso "Instalando JetBrains Toolbox..."
     if [[ ! -f ~/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox ]]; then
         URL=$(curl -s "https://data.services.jetbrains.com/products/releases?code=TBA&latest=true&type=release" \
-            | python3 -c "import sys,json; print(json.load(sys.stdin)['TBA'][0]['downloads']['linux']['link'])")
-        curl -fLo /tmp/jetbrains-toolbox.tar.gz "$URL"
-        TOOLBOX_DIR=$(tar -tzf /tmp/jetbrains-toolbox.tar.gz | head -1 | cut -d/ -f1)
-        tar -xzf /tmp/jetbrains-toolbox.tar.gz -C /tmp
-        mkdir -p ~/.local/share/JetBrains/Toolbox/bin
-        mv "/tmp/$TOOLBOX_DIR/jetbrains-toolbox" ~/.local/share/JetBrains/Toolbox/bin/
-        chmod +x ~/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox
-        ~/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox &
-        INSTALADOS+=("JetBrains Toolbox")
+            | python3 -c "import sys,json; print(json.load(sys.stdin)['TBA'][0]['downloads']['linux']['link'])" 2>/dev/null || true)
+        if [[ -z "$URL" ]]; then
+            echo -e "${BLUE}JetBrains Toolbox: não foi possível obter URL de download.${NC}"
+            FALHOS+=("JetBrains Toolbox")
+        elif curl -fLo /tmp/jetbrains-toolbox.tar.gz "$URL" \
+            && tar -tzf /tmp/jetbrains-toolbox.tar.gz > /dev/null \
+            && TOOLBOX_DIR=$(tar -tzf /tmp/jetbrains-toolbox.tar.gz | head -1 | cut -d/ -f1) \
+            && tar -xzf /tmp/jetbrains-toolbox.tar.gz -C /tmp \
+            && mkdir -p ~/.local/share/JetBrains/Toolbox/bin \
+            && mv "/tmp/$TOOLBOX_DIR/bin/jetbrains-toolbox" ~/.local/share/JetBrains/Toolbox/bin/ \
+            && chmod +x ~/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox; then
+            ~/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox &
+            INSTALADOS+=("JetBrains Toolbox")
+        else
+            FALHOS+=("JetBrains Toolbox")
+        fi
     else
         PULADOS+=("JetBrains Toolbox")
     fi
@@ -325,7 +342,7 @@ if run_section gnome; then
     progresso "Aplicando configurações do GNOME..."
     gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
     gsettings set org.gnome.desktop.interface icon-theme 'Yaru-dark'
-    gsettings set org.gnome.desktop.interface cursor-theme 'Breeze_cursors'
+    gsettings set org.gnome.desktop.interface cursor-theme 'breeze_cursors'
     gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close'
     gsettings set org.gnome.desktop.interface show-battery-percentage true
     gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
@@ -359,7 +376,7 @@ fi
 
 if run_section clitools; then
     progresso "Instalando ferramentas CLI..."
-    sudo dnf install bat eza bottom -y && INSTALADOS+=("Ferramentas CLI (bat, eza, bottom)") || FALHOS+=("Ferramentas CLI")
+    sudo dnf install bat eza btop -y --skip-unavailable && INSTALADOS+=("Ferramentas CLI (bat, eza, btop)") || FALHOS+=("Ferramentas CLI")
 fi
 
 if run_section claudecode || run_section codex; then
@@ -393,6 +410,7 @@ fi
 
 # Fecha a barra de progresso
 [[ -n "${MONITOR_PID:-}" ]] && kill "$MONITOR_PID" 2>/dev/null || true
+MONITOR_PID=""
 { echo "100"; } >&4 2>/dev/null || true
 exec 4>&- 2>/dev/null || true
 wait "$ZENITY_PROGRESS_PID" 2>/dev/null || true
