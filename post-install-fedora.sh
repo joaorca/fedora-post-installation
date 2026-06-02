@@ -10,6 +10,7 @@ FALHOS=()
 PROGRESS_PIPE=$(mktemp -u)
 ZENITY_PROGRESS_PID=""
 SUDO_KEEPALIVE_PID=""
+MONITOR_PID=""
 
 cleanup() {
     [[ -n "${SUDO_KEEPALIVE_PID:-}" ]] && kill "$SUDO_KEEPALIVE_PID" 2>/dev/null || true
@@ -18,6 +19,7 @@ cleanup() {
     rm -f "$PROGRESS_PIPE" 2>/dev/null || true
 }
 trap cleanup EXIT
+trap 'trap - SIGTERM; kill -- -$$ 2>/dev/null; exit 1' SIGTERM
 
 echo -e "${BLUE}=== Fedora 44 Workstation — Script de Pós-Instalação ===${NC}"
 
@@ -133,7 +135,8 @@ exec 4>"$PROGRESS_PIPE"
 
 # Encerra o script se o usuário cancelar pela janela do zenity
 ( while kill -0 "$ZENITY_PROGRESS_PID" 2>/dev/null; do sleep 1; done
-  kill -TERM "$$" 2>/dev/null ) &
+  kill -TERM -$$ 2>/dev/null ) &
+MONITOR_PID=$!
 
 progresso() {
     STEP=$(( STEP + 1 ))
@@ -204,7 +207,7 @@ fi
 if run_section chrome; then
     progresso "Instalando Google Chrome..."
     if ! rpm -q google-chrome-stable &>/dev/null; then
-        sudo dnf install https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm -y && INSTALADOS+=("Google Chrome") || FALHOS+=("Google Chrome")
+        sudo dnf install https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm -y --disablerepo='*' && INSTALADOS+=("Google Chrome") || FALHOS+=("Google Chrome")
     else
         PULADOS+=("Google Chrome")
     fi
@@ -233,7 +236,7 @@ if run_section vscode; then
         sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
         printf '[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc\n' \
             | sudo tee /etc/yum.repos.d/vscode.repo
-        sudo dnf install code -y && INSTALADOS+=("VS Code") || FALHOS+=("VS Code")
+        sudo dnf install code -y --disablerepo='*' --enablerepo='code' && INSTALADOS+=("VS Code") || FALHOS+=("VS Code")
     else
         PULADOS+=("VS Code")
     fi
@@ -389,6 +392,7 @@ if run_section limpeza; then
 fi
 
 # Fecha a barra de progresso
+[[ -n "${MONITOR_PID:-}" ]] && kill "$MONITOR_PID" 2>/dev/null || true
 { echo "100"; } >&4 2>/dev/null || true
 exec 4>&- 2>/dev/null || true
 wait "$ZENITY_PROGRESS_PID" 2>/dev/null || true
