@@ -126,11 +126,14 @@ zenity --progress \
     --text="Iniciando instalação..." \
     --percentage=0 \
     --width=500 \
-    --no-cancel \
     --auto-close \
     2>/dev/null < "$PROGRESS_PIPE" &
 ZENITY_PROGRESS_PID=$!
 exec 4>"$PROGRESS_PIPE"
+
+# Encerra o script se o usuário cancelar pela janela do zenity
+( while kill -0 "$ZENITY_PROGRESS_PID" 2>/dev/null; do sleep 1; done
+  kill -TERM "$$" 2>/dev/null ) &
 
 progresso() {
     STEP=$(( STEP + 1 ))
@@ -201,9 +204,7 @@ fi
 if run_section chrome; then
     progresso "Instalando Google Chrome..."
     if ! rpm -q google-chrome-stable &>/dev/null; then
-        sudo dnf install fedora-workstation-repositories -y
-        sudo dnf config-manager setopt google-chrome.enabled=1
-        sudo dnf install google-chrome-stable -y && INSTALADOS+=("Google Chrome") || FALHOS+=("Google Chrome")
+        sudo dnf install https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm -y && INSTALADOS+=("Google Chrome") || FALHOS+=("Google Chrome")
     else
         PULADOS+=("Google Chrome")
     fi
