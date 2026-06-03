@@ -53,7 +53,7 @@ cancelar() {
 }
 
 # --- Seleção ---
-n_itens=27
+n_itens=29
 altura=$(( 140 + n_itens * 36 ))
 
 SELECTED=$(zenity --list --checklist \
@@ -80,8 +80,8 @@ SELECTED=$(zenity --list --checklist \
     TRUE  toolbox     "JetBrains Toolbox  [tarball]" \
     TRUE  tweaks      "GNOME Tweaks  [DNF]" \
     TRUE  extmgr      "Gerenciador de Extensões GNOME  [DNF]" \
-    TRUE  appindicator "AppIndicator (ícones de bandeja no top bar)  [DNF]" \
-    TRUE  discord     "Discord  [Flatpak]" \
+    TRUE  extensions  "Extensões GNOME (5 extensões)  [GNOME Extensions]" \
+    TRUE  discord     "Discord  [RPM]" \
     TRUE  spotify     "Spotify  [Flatpak]" \
     TRUE  flatseal    "Flatseal  [Flatpak]" \
     TRUE  temas       "Temas e ícones (Yaru-dark e Breeze cursor)  [DNF]" \
@@ -89,8 +89,10 @@ SELECTED=$(zenity --list --checklist \
     TRUE  gnome       "Configurações de interface do GNOME  [gsettings]" \
     TRUE  fish        "Fish Shell (padrão + plugins)  [DNF]" \
     TRUE  clitools    "Ferramentas CLI (bat, eza, btop)  [DNF]" \
+    TRUE  podman      "Podman (Docker compat + rootless + socket)  [systemd]" \
     TRUE  claudecode  "Claude Code  [Node.js]" \
     TRUE  codex       "Codex (OpenAI)  [Node.js]" \
+    TRUE  manutencao  "Manutenção completa (Flatpak + extensões + limpeza)  [multi]" \
     TRUE  limpeza     "Limpeza do sistema (autoremove)  [DNF]" \
     TRUE  hostname    "Definir hostname da máquina  [sistema]" \
     2>/dev/null) || cancelar
@@ -221,14 +223,24 @@ if run_section codecs; then
         echo -e "${BLUE}RPM Fusion nonfree não encontrado — habilite o RPM Fusion primeiro.${NC}"
         FALHOS+=("Codecs GPU (RPM Fusion ausente)")
     else
+        MESA_VER=$(rpm -q --qf '%{VERSION}' mesa-libGL 2>/dev/null)
+        FREEWORLD_VER=$(dnf repoquery mesa-va-drivers-freeworld --qf '%{VERSION}\n' 2>/dev/null | sort -V | tail -1)
         codec_ok=true
-        if ! rpm -q mesa-va-drivers-freeworld &>/dev/null; then
-            sudo dnf swap mesa-va-drivers mesa-va-drivers-freeworld -y 2>&1 || codec_ok=false
+        if [[ -z "$FREEWORLD_VER" ]]; then
+            echo -e "${BLUE}mesa-va-drivers-freeworld não encontrado nos repos — RPM Fusion pode estar desatualizado.${NC}"
+            codec_ok=false
+        elif [[ "$MESA_VER" != "$FREEWORLD_VER" ]]; then
+            echo -e "${BLUE}Versão incompatível: mesa $MESA_VER instalada, freeworld disponível $FREEWORLD_VER — aguarde atualização do RPM Fusion.${NC}"
+            codec_ok=false
+        else
+            if ! rpm -q mesa-va-drivers-freeworld &>/dev/null; then
+                sudo dnf swap mesa-va-drivers mesa-va-drivers-freeworld -y 2>&1 || codec_ok=false
+            fi
+            if ! rpm -q mesa-vdpau-drivers-freeworld &>/dev/null; then
+                sudo dnf swap mesa-vdpau-drivers mesa-vdpau-drivers-freeworld -y 2>&1 || true
+            fi
         fi
-        if ! rpm -q mesa-vdpau-drivers-freeworld &>/dev/null; then
-            sudo dnf swap mesa-vdpau-drivers mesa-vdpau-drivers-freeworld -y 2>&1 || true
-        fi
-        $codec_ok && INSTALADOS+=("Codecs GPU") || FALHOS+=("Codecs GPU (falhou parcialmente)")
+        $codec_ok && INSTALADOS+=("Codecs GPU") || FALHOS+=("Codecs GPU (versão incompatível com RPM Fusion)")
     fi
 fi
 
@@ -305,32 +317,37 @@ if run_section extmgr; then
     sudo dnf install gnome-extensions-app -y && INSTALADOS+=("Gerenciador de Extensões") || FALHOS+=("Gerenciador de Extensões")
 fi
 
-if run_section appindicator; then
-    progresso "Instalando AppIndicator (ícones de bandeja)..."
-    if ! rpm -q gnome-shell-extension-appindicator &>/dev/null; then
-        sudo dnf install gnome-shell-extension-appindicator -y && INSTALADOS+=("AppIndicator") || FALHOS+=("AppIndicator")
-    else
-        PULADOS+=("AppIndicator")
-    fi
-    ext_uuid="appindicatorsupport@rgcjonas.gmail.com"
-    current_exts=$(gsettings get org.gnome.shell enabled-extensions 2>/dev/null || echo "@as []")
-    if ! echo "$current_exts" | grep -q "$ext_uuid"; then
-        if [[ "$current_exts" == "@as []" ]]; then
-            gsettings set org.gnome.shell enabled-extensions "['$ext_uuid']"
-        else
-            gsettings set org.gnome.shell enabled-extensions \
-                "$(echo "$current_exts" | sed "s/]$/, '$ext_uuid']/")"
+GNOME_EXTENSIONS=(
+    "615"   # AppIndicator and KStatusNotifierItem Support
+    "1401"  # Bluetooth Quick Connect
+    "3843"  # Just Perfection
+    "1460"  # Vitals
+    "517"   # Caffeine
+)
+
+if run_section extensions; then
+    progresso "Instalando extensões GNOME (${#GNOME_EXTENSIONS[@]} extensões)..."
+    if ! command -v gext &>/dev/null; then
+        if ! python3 -m pip show gnome-extensions-cli &>/dev/null; then
+            sudo dnf install python3-pip -y 2>/dev/null || true
+            python3 -m pip install --user gnome-extensions-cli
         fi
     fi
+    GEXT="${HOME}/.local/bin/gext"
+    ext_ok=true
+    for ext_id in "${GNOME_EXTENSIONS[@]}"; do
+        "$GEXT" install "$ext_id" 2>/dev/null && "$GEXT" enable "$ext_id" 2>/dev/null || ext_ok=false
+    done
+    $ext_ok && INSTALADOS+=("Extensões GNOME (${#GNOME_EXTENSIONS[@]})") || FALHOS+=("Extensões GNOME (falha parcial)")
 fi
 
 if run_section discord; then
     progresso "Instalando Discord..."
-    if flathub_ok; then
-        flatpak install --or-update flathub com.discordapp.Discord -y && INSTALADOS+=("Discord") || FALHOS+=("Discord")
+    if ! rpm -q discord &>/dev/null; then
+        sudo dnf install "https://discord.com/api/download?platform=linux&format=rpm" -y \
+            && INSTALADOS+=("Discord") || FALHOS+=("Discord")
     else
-        echo -e "${BLUE}Flathub não habilitado — pulando Discord.${NC}"
-        FALHOS+=("Discord (Flathub ausente)")
+        PULADOS+=("Discord")
     fi
 fi
 
@@ -383,7 +400,21 @@ if run_section gnome; then
     gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close'
     gsettings set org.gnome.desktop.interface show-battery-percentage true
     gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
+    # Nautilus
     gsettings set org.gnome.nautilus.preferences default-sort-order 'type' || true
+    gsettings set org.gnome.nautilus.preferences show-hidden-files true || true
+    gsettings set org.gnome.nautilus.preferences default-folder-viewer 'list-view' || true
+    # Clock
+    gsettings set org.gnome.desktop.interface clock-show-weekday true
+    gsettings set org.gnome.desktop.interface clock-show-date true
+    gsettings set org.gnome.desktop.interface clock-format '24h'
+    gsettings set org.gnome.desktop.datetime automatic-timezone true
+    gsettings set org.gnome.desktop.interface enable-hot-corners false
+    # Power profile: performance (via tuned)
+    sudo tuned-adm profile throughput-performance 2>/dev/null || true
+    # Fontes — antialiasing e hinting
+    gsettings set org.gnome.desktop.interface font-antialiasing 'rgba'
+    gsettings set org.gnome.desktop.interface font-hinting 'slight'
     if [[ -f ~/.local/share/fonts/JetBrainsMonoNerdFont-Regular.ttf ]]; then
         gsettings set org.gnome.desktop.interface monospace-font-name 'JetBrainsMono Nerd Font 10'
     else
@@ -407,6 +438,7 @@ if run_section fish; then
     fish -c "fisher list 2>/dev/null | grep -q plugin-git; or fisher install jhillyerd/plugin-git"
     fish -c "fisher list 2>/dev/null | grep -q fish-abbreviation-tips; or fisher install gazorby/fish-abbreviation-tips"
     fish -c "fisher list 2>/dev/null | grep -q tide; or fisher install IlanCosman/tide@v5"
+    fish -c "fisher list 2>/dev/null | grep -q fish-eza; or fisher install givensuman/fish-eza"
     echo -e "${BLUE}Dica: execute 'tide configure' após reiniciar para configurar o prompt.${NC}"
     INSTALADOS+=("Fish Shell")
 fi
@@ -414,6 +446,21 @@ fi
 if run_section clitools; then
     progresso "Instalando ferramentas CLI..."
     sudo dnf install bat eza btop -y --skip-unavailable && INSTALADOS+=("Ferramentas CLI (bat, eza, btop)") || FALHOS+=("Ferramentas CLI")
+fi
+
+if run_section podman; then
+    progresso "Configurando Podman..."
+    # podman-docker: fornece o comando 'docker' apontando para podman
+    if ! rpm -q podman-docker &>/dev/null; then
+        sudo dnf install podman-docker podman-compose -y && INSTALADOS+=("podman-docker + podman-compose") || FALHOS+=("podman-docker")
+    else
+        PULADOS+=("podman-docker")
+    fi
+    # Socket Podman: compatibilidade com ferramentas que usam Docker API
+    systemctl --user enable --now podman.socket 2>/dev/null && INSTALADOS+=("Podman socket") || true
+    # Linger: containers rootless rodam sem sessão ativa
+    loginctl enable-linger "$(whoami)" 2>/dev/null && INSTALADOS+=("Podman linger") || true
+    INSTALADOS+=("Podman configurado")
 fi
 
 if run_section claudecode || run_section codex; then
@@ -436,6 +483,26 @@ if run_section codex; then
     else
         PULADOS+=("Codex (OpenAI)")
     fi
+fi
+
+if run_section manutencao; then
+    progresso "Executando manutenção completa do sistema..."
+    # Flatpaks
+    echo -e "${BLUE}Atualizando Flatpaks...${NC}"
+    flatpak update -y 2>&1 | tail -3
+    # Extensões GNOME
+    if command -v gext &>/dev/null || [[ -f "$HOME/.local/bin/gext" ]]; then
+        echo -e "${BLUE}Atualizando extensões GNOME...${NC}"
+        "${HOME}/.local/bin/gext" upgrade 2>/dev/null || true
+        python3 -m pip install --user --upgrade gnome-extensions-cli 2>/dev/null || true
+    fi
+    # DNF
+    echo -e "${BLUE}Atualizando pacotes DNF...${NC}"
+    sudo dnf upgrade --refresh -y 2>&1 | tail -5
+    # Limpeza
+    sudo dnf autoremove -y 2>/dev/null || true
+    sudo dnf clean all 2>/dev/null || true
+    INSTALADOS+=("Manutenção completa")
 fi
 
 if run_section limpeza; then
