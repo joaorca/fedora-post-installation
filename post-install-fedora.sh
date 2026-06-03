@@ -53,56 +53,76 @@ cancelar() {
 }
 
 # --- Seleção ---
-n_itens=29
+_ITEMS=(
+    "dnf5|Otimizar o DNF5 (velocidade e cores)  [DNF]"
+    "wifi|Desabilitar WiFi power save (reduz latência)  [NetworkManager]"
+    "sysupdate|Atualizar sistema  [DNF]"
+    "rpmfusion|Habilitar RPM Fusion  [DNF]"
+    "flathub|Habilitar Flathub  [Flatpak]"
+    "firmware|Atualizar firmware do hardware  [fwupd]"
+    "chrome|Google Chrome  [RPM]"
+    "1password|1Password  [RPM]"
+    "neovim|Neovim  [DNF]"
+    "vscode|Visual Studio Code  [RPM]"
+    "toolbox|JetBrains Toolbox  [tarball]"
+    "tweaks|GNOME Tweaks  [DNF]"
+    "extmgr|Gerenciador de Extensões GNOME  [DNF]"
+    "extensions|Extensões GNOME (5 extensões)  [GNOME Extensions]"
+    "discord|Discord  [RPM]"
+    "spotify|Spotify  [Flatpak]"
+    "flatseal|Flatseal  [Flatpak]"
+    "temas|Temas e ícones (Yaru-dark e Breeze cursor)  [DNF]"
+    "fontes|Fonte JetBrains Mono Nerd Font  [download]"
+    "gnome|Configurações de interface do GNOME  [gsettings]"
+    "fish|Fish Shell (padrão + plugins)  [DNF]"
+    "clitools|Ferramentas CLI (bat, eza, btop)  [DNF]"
+    "podman|Podman (Docker compat + rootless + socket)  [systemd]"
+    "claudecode|Claude Code  [Node.js]"
+    "codex|Codex (OpenAI)  [Node.js]"
+    "manutencao|Manutenção completa (Flatpak + extensões + limpeza)  [multi]"
+    "limpeza|Limpeza do sistema (autoremove)  [DNF]"
+    "hostname|Definir hostname da máquina  [sistema]"
+)
+n_itens=${#_ITEMS[@]}
 altura=$(( 140 + n_itens * 36 ))
+_default=TRUE
 
-SELECTED=$(zenity --list --checklist \
-    --title="Fedora 44 — Pós-Instalação" \
-    --text="Selecione o que deseja instalar e configurar:" \
-    --column="" --column="ID" --column="Descrição" \
-    --width=620 --height="$altura" \
-    --ok-label="Instalar" \
-    --cancel-label="Desistir" \
-    --hide-column=2 \
-    --hide-header \
-    --separator="|" \
-    TRUE  dnf5        "Otimizar o DNF5 (velocidade e cores)  [DNF]" \
-    TRUE  wifi        "Desabilitar WiFi power save (reduz latência)  [NetworkManager]" \
-    TRUE  sysupdate   "Atualizar sistema  [DNF]" \
-    TRUE  rpmfusion   "Habilitar RPM Fusion  [DNF]" \
-    TRUE  flathub     "Habilitar Flathub  [Flatpak]" \
-    TRUE  firmware    "Atualizar firmware do hardware  [fwupd]" \
-    TRUE  codecs      "Codecs de hardware para GPU  [RPM Fusion]" \
-    TRUE  chrome      "Google Chrome  [RPM]" \
-    TRUE  1password   "1Password  [RPM]" \
-    TRUE  neovim      "Neovim  [DNF]" \
-    TRUE  vscode      "Visual Studio Code  [RPM]" \
-    TRUE  toolbox     "JetBrains Toolbox  [tarball]" \
-    TRUE  tweaks      "GNOME Tweaks  [DNF]" \
-    TRUE  extmgr      "Gerenciador de Extensões GNOME  [DNF]" \
-    TRUE  extensions  "Extensões GNOME (5 extensões)  [GNOME Extensions]" \
-    TRUE  discord     "Discord  [RPM]" \
-    TRUE  spotify     "Spotify  [Flatpak]" \
-    TRUE  flatseal    "Flatseal  [Flatpak]" \
-    TRUE  temas       "Temas e ícones (Yaru-dark e Breeze cursor)  [DNF]" \
-    TRUE  fontes      "Fonte JetBrains Mono Nerd Font  [download]" \
-    TRUE  gnome       "Configurações de interface do GNOME  [gsettings]" \
-    TRUE  fish        "Fish Shell (padrão + plugins)  [DNF]" \
-    TRUE  clitools    "Ferramentas CLI (bat, eza, btop)  [DNF]" \
-    TRUE  podman      "Podman (Docker compat + rootless + socket)  [systemd]" \
-    TRUE  claudecode  "Claude Code  [Node.js]" \
-    TRUE  codex       "Codex (OpenAI)  [Node.js]" \
-    TRUE  manutencao  "Manutenção completa (Flatpak + extensões + limpeza)  [multi]" \
-    TRUE  limpeza     "Limpeza do sistema (autoremove)  [DNF]" \
-    TRUE  hostname    "Definir hostname da máquina  [sistema]" \
-    2>/dev/null) || cancelar
+while true; do
+    _args=()
+    for _item in "${_ITEMS[@]}"; do
+        _id="${_item%%|*}"
+        _desc="${_item##*|}"
+        _args+=("$_default" "$_id" "$_desc")
+    done
+    [[ "$_default" == TRUE ]] && _btn="Desmarcar tudo" || _btn="Marcar tudo"
 
-if [[ -z "$SELECTED" ]]; then
-    zenity --info --title="Nada selecionado" \
-        --text="Nenhuma opção foi selecionada. Encerrando." \
-        --width=300 2>/dev/null || true
-    exit 0
-fi
+    _result=$(zenity --list --checklist \
+        --title="Fedora 44 — Pós-Instalação" \
+        --text="Selecione o que deseja instalar e configurar:" \
+        --column="" --column="ID" --column="Descrição" \
+        --width=620 --height="$altura" \
+        --ok-label="Instalar" \
+        --cancel-label="Cancelar" \
+        --extra-button="$_btn" \
+        --hide-column=2 \
+        --hide-header \
+        --separator="|" \
+        "${_args[@]}" \
+        2>/dev/null) || true
+
+    case "$_result" in
+        "Marcar tudo")   _default=TRUE;  continue ;;
+        "Desmarcar tudo") _default=FALSE; continue ;;
+        "")
+            zenity --info --title="Nada selecionado" \
+                --text="Nenhuma opção foi selecionada. Encerrando." \
+                --width=300 2>/dev/null || true
+            exit 0
+            ;;
+        *) SELECTED="$_result"; break ;;
+    esac
+done
+
 
 run_section() {
     echo "$SELECTED" | tr '|' '\n' | grep -qx "$1"
@@ -156,7 +176,7 @@ progresso() {
     local pct=$(( STEP * 100 / TOTAL_STEPS ))
     [[ $pct -ge 100 ]] && pct=99
     { echo "# [$pct%] $1"; echo "$pct"; } >&4 2>/dev/null || true
-    echo -e "${BLUE}$1${NC}"
+    echo -e "${BLUE}[Etapa $STEP/$TOTAL_STEPS] $1${NC}"
 }
 
 # --- Execução ---
@@ -217,32 +237,6 @@ if run_section firmware; then
     INSTALADOS+=("Firmware atualizado")
 fi
 
-if run_section codecs; then
-    progresso "Instalando codecs de GPU..."
-    if ! rpm -q rpmfusion-nonfree-release &>/dev/null; then
-        echo -e "${BLUE}RPM Fusion nonfree não encontrado — habilite o RPM Fusion primeiro.${NC}"
-        FALHOS+=("Codecs GPU (RPM Fusion ausente)")
-    else
-        MESA_VER=$(rpm -q --qf '%{VERSION}' mesa-libGL 2>/dev/null)
-        FREEWORLD_VER=$(dnf repoquery mesa-va-drivers-freeworld --qf '%{VERSION}\n' 2>/dev/null | sort -V | tail -1)
-        codec_ok=true
-        if [[ -z "$FREEWORLD_VER" ]]; then
-            echo -e "${BLUE}mesa-va-drivers-freeworld não encontrado nos repos — RPM Fusion pode estar desatualizado.${NC}"
-            codec_ok=false
-        elif [[ "$MESA_VER" != "$FREEWORLD_VER" ]]; then
-            echo -e "${BLUE}Versão incompatível: mesa $MESA_VER instalada, freeworld disponível $FREEWORLD_VER — aguarde atualização do RPM Fusion.${NC}"
-            codec_ok=false
-        else
-            if ! rpm -q mesa-va-drivers-freeworld &>/dev/null; then
-                sudo dnf swap mesa-va-drivers mesa-va-drivers-freeworld -y 2>&1 || codec_ok=false
-            fi
-            if ! rpm -q mesa-vdpau-drivers-freeworld &>/dev/null; then
-                sudo dnf swap mesa-vdpau-drivers mesa-vdpau-drivers-freeworld -y 2>&1 || true
-            fi
-        fi
-        $codec_ok && INSTALADOS+=("Codecs GPU") || FALHOS+=("Codecs GPU (versão incompatível com RPM Fusion)")
-    fi
-fi
 
 if run_section chrome; then
     progresso "Instalando Google Chrome..."
@@ -290,17 +284,31 @@ if run_section toolbox; then
         if [[ -z "$URL" ]]; then
             echo -e "${BLUE}JetBrains Toolbox: não foi possível obter URL de download.${NC}"
             FALHOS+=("JetBrains Toolbox")
-        elif curl -fLo /tmp/jetbrains-toolbox.tar.gz "$URL" \
-            && tar -tzf /tmp/jetbrains-toolbox.tar.gz > /dev/null \
-            && TOOLBOX_DIR=$(tar -tzf /tmp/jetbrains-toolbox.tar.gz | head -1 | cut -d/ -f1) \
-            && tar -xzf /tmp/jetbrains-toolbox.tar.gz -C /tmp \
-            && mkdir -p ~/.local/share/JetBrains/Toolbox/bin \
-            && cp -r "/tmp/$TOOLBOX_DIR/bin/." ~/.local/share/JetBrains/Toolbox/bin/ \
-            && chmod +x ~/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox; then
-            ~/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox &
-            INSTALADOS+=("JetBrains Toolbox")
         else
-            FALHOS+=("JetBrains Toolbox")
+            _tb_ok=false
+            if curl -fLo /tmp/jetbrains-toolbox.tar.gz "$URL" \
+                && tar -xzf /tmp/jetbrains-toolbox.tar.gz -C /tmp; then
+                TOOLBOX_DIR=""
+                for _d in /tmp/jetbrains-toolbox-*/; do
+                    [[ -d "$_d" ]] && TOOLBOX_DIR=$(basename "$_d") && break
+                done || true
+                if [[ -n "$TOOLBOX_DIR" ]] \
+                    && mkdir -p ~/.local/share/JetBrains/Toolbox/bin \
+                    && cp -r "/tmp/$TOOLBOX_DIR/bin/." ~/.local/share/JetBrains/Toolbox/bin/ \
+                    && chmod +x ~/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox; then
+                    _tb_ok=true
+                else
+                    echo -e "${BLUE}JetBrains Toolbox: falha ao copiar (TOOLBOX_DIR='$TOOLBOX_DIR').${NC}"
+                fi
+            else
+                echo -e "${BLUE}JetBrains Toolbox: falha no download ou extração.${NC}"
+            fi
+            if $_tb_ok; then
+                ~/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox &
+                INSTALADOS+=("JetBrains Toolbox")
+            else
+                FALHOS+=("JetBrains Toolbox")
+            fi
         fi
     else
         PULADOS+=("JetBrains Toolbox")
