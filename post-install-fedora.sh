@@ -53,7 +53,7 @@ cancelar() {
 }
 
 # --- Seleção ---
-n_itens=25
+n_itens=27
 altura=$(( 140 + n_itens * 36 ))
 
 SELECTED=$(zenity --list --checklist \
@@ -67,6 +67,7 @@ SELECTED=$(zenity --list --checklist \
     --hide-header \
     --separator="|" \
     TRUE  dnf5        "Otimizar o DNF5 (velocidade e cores)  [DNF]" \
+    TRUE  wifi        "Desabilitar WiFi power save (reduz latência)  [NetworkManager]" \
     TRUE  sysupdate   "Atualizar sistema  [DNF]" \
     TRUE  rpmfusion   "Habilitar RPM Fusion  [DNF]" \
     TRUE  flathub     "Habilitar Flathub  [Flatpak]" \
@@ -79,6 +80,7 @@ SELECTED=$(zenity --list --checklist \
     TRUE  toolbox     "JetBrains Toolbox  [tarball]" \
     TRUE  tweaks      "GNOME Tweaks  [DNF]" \
     TRUE  extmgr      "Gerenciador de Extensões GNOME  [DNF]" \
+    TRUE  appindicator "AppIndicator (ícones de bandeja no top bar)  [DNF]" \
     TRUE  discord     "Discord  [Flatpak]" \
     TRUE  spotify     "Spotify  [Flatpak]" \
     TRUE  flatseal    "Flatseal  [Flatpak]" \
@@ -164,6 +166,21 @@ if run_section dnf5; then
     INSTALADOS+=("DNF5 otimizado")
 fi
 
+if run_section wifi; then
+    progresso "Desabilitando WiFi power save..."
+    if nmcli -t -f DEVICE,TYPE dev 2>/dev/null | grep -q ':wifi'; then
+        sudo tee /etc/NetworkManager/conf.d/wifi-powersave-off.conf > /dev/null << 'NMEOF'
+[connection]
+wifi.powersave = 2
+NMEOF
+        WIFI_DEV=$(nmcli -t -f DEVICE,TYPE dev | grep ':wifi' | cut -d: -f1 | head -1)
+        iw dev "$WIFI_DEV" set power_save off 2>/dev/null || true
+        INSTALADOS+=("WiFi power save desabilitado")
+    else
+        PULADOS+=("WiFi power save (sem adaptador WiFi detectado)")
+    fi
+fi
+
 if run_section sysupdate; then
     progresso "Atualizando sistema..."
     sudo dnf upgrade --refresh -y
@@ -187,6 +204,7 @@ if run_section flathub; then
     progresso "Habilitando Flathub..."
     flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
     flatpak remote-modify --enable flathub
+    flatpak update --appstream -y 2>/dev/null || true
     INSTALADOS+=("Flathub")
 fi
 
@@ -265,7 +283,7 @@ if run_section toolbox; then
             && TOOLBOX_DIR=$(tar -tzf /tmp/jetbrains-toolbox.tar.gz | head -1 | cut -d/ -f1) \
             && tar -xzf /tmp/jetbrains-toolbox.tar.gz -C /tmp \
             && mkdir -p ~/.local/share/JetBrains/Toolbox/bin \
-            && mv "/tmp/$TOOLBOX_DIR/bin/jetbrains-toolbox" ~/.local/share/JetBrains/Toolbox/bin/ \
+            && cp -r "/tmp/$TOOLBOX_DIR/bin/." ~/.local/share/JetBrains/Toolbox/bin/ \
             && chmod +x ~/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox; then
             ~/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox &
             INSTALADOS+=("JetBrains Toolbox")
@@ -285,6 +303,25 @@ fi
 if run_section extmgr; then
     progresso "Instalando Gerenciador de Extensões..."
     sudo dnf install gnome-extensions-app -y && INSTALADOS+=("Gerenciador de Extensões") || FALHOS+=("Gerenciador de Extensões")
+fi
+
+if run_section appindicator; then
+    progresso "Instalando AppIndicator (ícones de bandeja)..."
+    if ! rpm -q gnome-shell-extension-appindicator &>/dev/null; then
+        sudo dnf install gnome-shell-extension-appindicator -y && INSTALADOS+=("AppIndicator") || FALHOS+=("AppIndicator")
+    else
+        PULADOS+=("AppIndicator")
+    fi
+    ext_uuid="appindicatorsupport@rgcjonas.gmail.com"
+    current_exts=$(gsettings get org.gnome.shell enabled-extensions 2>/dev/null || echo "@as []")
+    if ! echo "$current_exts" | grep -q "$ext_uuid"; then
+        if [[ "$current_exts" == "@as []" ]]; then
+            gsettings set org.gnome.shell enabled-extensions "['$ext_uuid']"
+        else
+            gsettings set org.gnome.shell enabled-extensions \
+                "$(echo "$current_exts" | sed "s/]$/, '$ext_uuid']/")"
+        fi
+    fi
 fi
 
 if run_section discord; then
