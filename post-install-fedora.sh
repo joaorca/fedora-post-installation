@@ -70,7 +70,6 @@ _ITEMS=(
     "extensions|Extensões GNOME (5 extensões)  [GNOME Extensions]"
     "discord|Discord  [RPM]"
     "spotify|Spotify  [Flatpak]"
-    "flatseal|Flatseal  [Flatpak]"
     "temas|Temas e ícones (Yaru-dark e Breeze cursor)  [DNF]"
     "fontes|Fonte JetBrains Mono Nerd Font  [download]"
     "gnome|Configurações de interface do GNOME  [gsettings]"
@@ -366,16 +365,6 @@ if run_section spotify; then
     else
         echo -e "${BLUE}Flathub não habilitado — pulando Spotify.${NC}"
         FALHOS+=("Spotify (Flathub ausente)")
-    fi
-fi
-
-if run_section flatseal; then
-    progresso "Instalando Flatseal..."
-    if flathub_ok; then
-        flatpak install --or-update flathub com.github.tchx84.Flatseal -y && INSTALADOS+=("Flatseal") || FALHOS+=("Flatseal")
-    else
-        echo -e "${BLUE}Flathub não habilitado — pulando Flatseal.${NC}"
-        FALHOS+=("Flatseal (Flathub ausente)")
     fi
 fi
 

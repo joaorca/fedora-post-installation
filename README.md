@@ -13,7 +13,7 @@ O script exibe um dialog zenity para selecionar as seções desejadas antes de i
 
 ## Seções
 
-O script possui 28 seções opcionais e interativas. Cada uma pode ser incluída ou pulada individualmente:
+O script possui 27 seções opcionais e interativas. Cada uma pode ser incluída ou pulada individualmente:
 
 | Seção | Descrição | Método |
 |---|---|---|
@@ -33,7 +33,6 @@ O script possui 28 seções opcionais e interativas. Cada uma pode ser incluída
 | extensions | Extensões GNOME (5 extensões) | GNOME Extensions |
 | discord | Discord | RPM |
 | spotify | Spotify | Flatpak |
-| flatseal | Flatseal | Flatpak |
 | temas | Temas e ícones (Yaru-dark e Breeze cursor) | DNF |
 | fontes | Fonte JetBrains Mono Nerd Font | download |
 | gnome | Configurações de interface do GNOME | gsettings |
