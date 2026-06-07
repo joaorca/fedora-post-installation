@@ -81,6 +81,8 @@ _ITEMS=(
     "manutencao|Manutenção completa (Flatpak + extensões + limpeza)  [multi]"
     "limpeza|Limpeza do sistema (autoremove)  [DNF]"
     "hostname|Definir hostname da máquina  [sistema]"
+    "mx2s|MX Anywhere 2S — botões laterais (workspace)  [input-remapper]"
+    "mx3s|MX Anywhere 3S — botões laterais (workspace) + swap middle/smartshift  [input-remapper + Solaar]"
 )
 n_itens=${#_ITEMS[@]}
 altura=$(( 140 + n_itens * 36 ))
@@ -516,6 +518,99 @@ MONITOR_PID=""
 exec 4>&- 2>/dev/null || true
 wait "$ZENITY_PROGRESS_PID" 2>/dev/null || true
 ZENITY_PROGRESS_PID=""
+
+# MX Anywhere 2S — input-remapper (botões laterais → workspace)
+_setup_input_remapper() {
+    local _mouse_pattern="$1"
+    if ! rpm -q input-remapper &>/dev/null; then
+        sudo dnf install -y input-remapper || { FALHOS+=("input-remapper"); return 1; }
+    fi
+    sudo systemctl enable --now input-remapper
+    local _config_file="$HOME/.config/input-remapper-2/config.json"
+    local _found=0
+    while IFS='|' read -r _mouse_name _mouse_hash; do
+        [[ -z "$_mouse_hash" ]] && continue
+        _found=1
+        local _preset_dir="$HOME/.config/input-remapper-2/presets/$_mouse_name"
+        mkdir -p "$_preset_dir"
+        cat > "$_preset_dir/workspaces.json" << EOF
+[
+    {
+        "input_combination": [{"type": 1, "code": 275, "origin_hash": "$_mouse_hash"}],
+        "target_uinput": "keyboard",
+        "output_symbol": "KEY_LEFTCTRL + KEY_LEFTALT + KEY_RIGHT",
+        "mapping_type": "key_macro",
+        "name": "workspace direita"
+    },
+    {
+        "input_combination": [{"type": 1, "code": 276, "origin_hash": "$_mouse_hash"}],
+        "target_uinput": "keyboard",
+        "output_symbol": "KEY_LEFTCTRL + KEY_LEFTALT + KEY_LEFT",
+        "mapping_type": "key_macro",
+        "name": "workspace esquerda"
+    }
+]
+EOF
+        if [[ -f "$_config_file" ]]; then
+            python3 -c "
+import json
+with open('$_config_file') as f:
+    cfg = json.load(f)
+cfg.setdefault('autoload', {})['$_mouse_name'] = 'workspaces'
+with open('$_config_file', 'w') as f:
+    json.dump(cfg, f, indent=4)
+" 2>/dev/null
+        else
+            printf '{\n    "version": "2.2.0",\n    "autoload": {\n        "%s": "workspaces"\n    }\n}\n' "$_mouse_name" > "$_config_file"
+        fi
+        INSTALADOS+=("input-remapper: $_mouse_name")
+    done < <(python3 -c "
+import glob
+from inputremapper.utils import get_device_hash
+import evdev
+for path in sorted(glob.glob('/dev/input/event*')):
+    try:
+        dev = evdev.InputDevice(path)
+        if '$_mouse_pattern' in dev.name:
+            print(dev.name + '|' + get_device_hash(dev))
+    except Exception:
+        pass
+" 2>/dev/null)
+    if [[ $_found -eq 0 ]]; then
+        echo -e "${BLUE}Mouse não encontrado — conecte via Bluetooth e rode novamente.${NC}"
+        FALHOS+=("input-remapper: $_mouse_pattern não encontrado")
+        return 1
+    fi
+    sudo input-remapper-control --command stop-all 2>/dev/null || true
+    sudo input-remapper-control --command autoload 2>/dev/null || true
+}
+
+if run_section mx2s; then
+    progresso "Configurando MX Anywhere 2S (input-remapper)..."
+    _setup_input_remapper "MX Anywhere 2S Mouse"
+fi
+
+# MX Anywhere 3S — input-remapper (botões laterais → workspace) + Solaar (swap middle/smartshift)
+if run_section mx3s; then
+    progresso "Configurando MX Anywhere 3S (input-remapper + Solaar)..."
+    _setup_input_remapper "Logitech MX Anywhere 3S"
+    # Solaar: swap Middle Button ↔ Smart Shift
+    if ! rpm -q solaar &>/dev/null; then
+        sudo dnf install -y solaar || { FALHOS+=("solaar"); }
+    else
+        PULADOS+=("solaar (já instalado)")
+    fi
+    if rpm -q solaar &>/dev/null; then
+        if solaar show 2>/dev/null | grep -q "MX Anywhere 3S"; then
+            solaar config "MX Anywhere 3S" reprogrammable-keys "Middle Button" "Smart Shift" 2>/dev/null
+            solaar config "MX Anywhere 3S" reprogrammable-keys "Smart Shift" "Mouse Middle Button" 2>/dev/null
+            INSTALADOS+=("Solaar: MX Anywhere 3S botões configurados")
+        else
+            echo -e "${BLUE}MX Anywhere 3S não encontrado via Solaar — conecte via Bluetooth e rode novamente.${NC}"
+            FALHOS+=("solaar: MX Anywhere 3S não encontrado")
+        fi
+    fi
+fi
 
 # Hostname
 if run_section hostname; then
