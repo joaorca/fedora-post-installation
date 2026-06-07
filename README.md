@@ -13,7 +13,7 @@ O script exibe um dialog zenity para selecionar as seções desejadas antes de i
 
 ## Seções
 
-O script possui 27 seções opcionais e interativas. Cada uma pode ser incluída ou pulada individualmente:
+O script possui 29 seções opcionais e interativas. Cada uma pode ser incluída ou pulada individualmente:
 
 | Seção | Descrição | Método |
 |---|---|---|
@@ -44,6 +44,8 @@ O script possui 27 seções opcionais e interativas. Cada uma pode ser incluída
 | manutencao | Manutenção completa (Flatpak + extensões + limpeza) | multi |
 | limpeza | Limpeza do sistema (autoremove) | DNF |
 | hostname | Definir hostname da máquina | sistema |
+| mx2s | MX Anywhere 2S — botões laterais para workspace | input-remapper |
+| mx3s | MX Anywhere 3S — botões laterais para workspace + swap middle/smartshift | input-remapper + Solaar |
 
 ## Observações
 
