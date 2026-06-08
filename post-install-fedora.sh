@@ -564,7 +564,7 @@ with open('$_config_file', 'w') as f:
             printf '{\n    "version": "2.2.0",\n    "autoload": {\n        "%s": "workspaces"\n    }\n}\n' "$_mouse_name" > "$_config_file"
         fi
         INSTALADOS+=("input-remapper: $_mouse_name")
-    done < <(python3 -c "
+    done < <(sudo python3 -c "
 import glob
 from inputremapper.utils import get_device_hash
 import evdev
