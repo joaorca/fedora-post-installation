@@ -56,6 +56,7 @@ cancelar() {
 _ITEMS=(
     "dnf5|Otimizar o DNF5 (velocidade e cores)  [DNF]"
     "wifi|Desabilitar WiFi power save (reduz latência)  [NetworkManager]"
+    "bluetooth|Ativar Bluetooth automático no boot (AutoEnable + FastConnectable)  [bluetoothd]"
     "sysupdate|Atualizar sistema  [DNF]"
     "rpmfusion|Habilitar RPM Fusion  [DNF]"
     "flathub|Habilitar Flathub  [Flatpak]"
@@ -202,6 +203,14 @@ NMEOF
     else
         PULADOS+=("WiFi power save (sem adaptador WiFi detectado)")
     fi
+fi
+
+if run_section bluetooth; then
+    progresso "Configurando Bluetooth automático..."
+    sudo sed -i 's/^#AutoEnable=true/AutoEnable=true/' /etc/bluetooth/main.conf
+    sudo sed -i 's/^#FastConnectable = false/FastConnectable = true/' /etc/bluetooth/main.conf
+    sudo systemctl restart bluetooth
+    INSTALADOS+=("Bluetooth: AutoEnable + FastConnectable")
 fi
 
 if run_section sysupdate; then

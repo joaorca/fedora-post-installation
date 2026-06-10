@@ -13,12 +13,13 @@ O script exibe um dialog zenity para selecionar as seções desejadas antes de i
 
 ## Seções
 
-O script possui 29 seções opcionais e interativas. Cada uma pode ser incluída ou pulada individualmente:
+O script possui 30 seções opcionais e interativas. Cada uma pode ser incluída ou pulada individualmente:
 
 | Seção | Descrição | Método |
 |---|---|---|
 | dnf5 | Otimizar o DNF5 (velocidade e cores) | DNF |
 | wifi | Desabilitar WiFi power save (reduz latência) | NetworkManager |
+| bluetooth | Ativar Bluetooth automático no boot (AutoEnable + FastConnectable) | bluetoothd |
 | sysupdate | Atualizar sistema | DNF |
 | rpmfusion | Habilitar RPM Fusion | DNF |
 | flathub | Habilitar Flathub | Flatpak |
