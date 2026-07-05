@@ -143,6 +143,11 @@ npm_setup() {
     if [[ "$(npm config get prefix 2>/dev/null)" != "$NPM_PREFIX" ]]; then
         npm config set prefix "$NPM_PREFIX"
     fi
+    local NPM_CACHE="$HOME/.cache/npm"
+    if [[ "$(npm config get cache 2>/dev/null)" != "$NPM_CACHE" ]]; then
+        mkdir -p "$NPM_CACHE"
+        npm config set cache "$NPM_CACHE"
+    fi
     if command -v fish &>/dev/null; then
         fish -c "contains -- $HOME/.local/bin \$fish_user_paths; or set -U fish_user_paths $HOME/.local/bin \$fish_user_paths" 2>/dev/null || true
     fi
