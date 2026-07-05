@@ -139,16 +139,11 @@ npm_setup() {
         echo -e "${BLUE}Instalando Node.js...${NC}"
         sudo dnf install nodejs npm -y
     fi
-    local NPM_PREFIX="$HOME/.npm-global"
+    local NPM_PREFIX="$HOME/.local"
     if [[ "$(npm config get prefix 2>/dev/null)" != "$NPM_PREFIX" ]]; then
-        mkdir -p "$NPM_PREFIX"
         npm config set prefix "$NPM_PREFIX"
     fi
-    export PATH="$NPM_PREFIX/bin:$PATH"
-    grep -q 'npm-global' ~/.bashrc 2>/dev/null || \
-        echo 'export PATH="$HOME/.npm-global/bin:$PATH"' >> ~/.bashrc
     if command -v fish &>/dev/null; then
-        fish -c "contains -- $HOME/.npm-global/bin \$fish_user_paths; or set -U fish_user_paths $HOME/.npm-global/bin \$fish_user_paths" 2>/dev/null || true
         fish -c "contains -- $HOME/.local/bin \$fish_user_paths; or set -U fish_user_paths $HOME/.local/bin \$fish_user_paths" 2>/dev/null || true
     fi
 }
